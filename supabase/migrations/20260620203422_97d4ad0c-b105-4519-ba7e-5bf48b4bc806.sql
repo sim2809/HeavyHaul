@@ -1,0 +1,1 @@
+ALTER TABLE public.hubspot_settings ADD COLUMN IF NOT EXISTS private_app_token text;

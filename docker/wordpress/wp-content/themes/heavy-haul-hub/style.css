@@ -1,0 +1,9 @@
+/*
+Theme Name: Heavy Haul Hub
+Theme URI: https://heavyhaulgroup.com
+Author: Heavy Haul Group
+Description: Custom theme rendering the Heavy Haul Hub site. Pixel-ported from the original React/Vite/Tailwind/shadcn frontend — see /docker/wordpress/wp-content/themes/heavy-haul-hub/assets/css/tailwind-src.css for the source Tailwind layer and /docker/wordpress/tailwind.config.cjs for the compiled build config. Visual styling is served from the compiled assets/css/tailwind.css, not this file.
+Version: 1.0.0
+Requires PHP: 8.0
+Text Domain: heavy-haul-hub
+*/

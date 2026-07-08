@@ -1,0 +1,104 @@
+/**
+ * Tailwind build config for the heavy-haul-hub WordPress theme.
+ * Mirrors the root tailwind.config.ts token-for-token (colors/fonts/gradients/shadows/
+ * keyframes) but scans .php template files instead of .tsx — same tokens, same pixels.
+ * Run via `npm run wp:css` / `npm run wp:css:watch` from the repo root.
+ */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    "./docker/wordpress/wp-content/themes/heavy-haul-hub/**/*.php",
+  ],
+  prefix: "",
+  theme: {
+    container: { center: true, padding: "1.5rem", screens: { "2xl": "1400px" } },
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Anton", "Impact", "sans-serif"],
+        condensed: ["Oswald", "Impact", "sans-serif"],
+        stencil: ['"Stardos Stencil"', "Anton", "Impact", "sans-serif"],
+      },
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+        popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+      },
+      backgroundImage: {
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-amber": "var(--gradient-amber)",
+        "gradient-dark": "var(--gradient-dark)",
+        "gradient-stripe": "var(--gradient-stripe)",
+      },
+      boxShadow: {
+        glow: "var(--shadow-glow)",
+        card: "var(--shadow-card)",
+        cta: "var(--shadow-cta)",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
+        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
+        "pulse-ring": {
+          "0%": { boxShadow: "0 0 0 0 hsl(22 100% 50% / 0.6)" },
+          "70%": { boxShadow: "0 0 0 16px hsl(22 100% 50% / 0)" },
+          "100%": { boxShadow: "0 0 0 0 hsl(22 100% 50% / 0)" },
+        },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "sweep-x": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-ring": "pulse-ring 2s infinite",
+        "fade-up": "fade-up 0.6s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
+        "scale-in": "scale-in 0.25s ease-out",
+        marquee: "marquee 45s linear infinite",
+        "sweep-x": "sweep-x 3.2s ease-in-out infinite",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+};
