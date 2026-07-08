@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 # Idempotent WP bootstrap. Run via:
-#   docker compose -f docker/wordpress/docker-compose.yml run --rm wpcli bash /scripts/bootstrap.sh
-set -euo pipefail
+#   docker compose -f docker/wordpress/docker-compose.yml run --rm --entrypoint sh wpcli /scripts/bootstrap.sh
+set -eu
 
 cd /var/www/html
 
