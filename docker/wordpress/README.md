@@ -36,6 +36,7 @@ Then visit:
 |---|---|---|
 | Yoast SEO | Free | Automatic — `bootstrap.sh` installs from wordpress.org |
 | ACF fields (Flexible Content, Repeater, Options Page) | Free | Automatic — `bootstrap.sh` installs **Secure Custom Fields** (SCF) from wordpress.org by default. SCF is WordPress.org's fork of ACF and includes these field types (previously ACF-PRO-only) for free, with the same `acf_add_local_field_group()`/`get_field()` API `heavy-haul-acf.php` and the theme templates use. |
+| WPGraphQL + WPGraphQL for ACF | Free | Automatic — only needed if you run `scripts/migrate-to-wordpress` (`npm run migrate:wp`) to pull existing Supabase content in. Not needed for the site/theme itself. |
 
 If you'd rather use the official **ACF PRO** plugin instead (paid, ~$49+/yr, from
 advancedcustomfields.com), drop its zip (named like `advanced-custom-fields-pro-X.X.X.zip`)

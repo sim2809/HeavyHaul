@@ -39,6 +39,13 @@ wp rewrite flush --hard --allow-root
 echo "==> Installing free plugins from wordpress.org..."
 wp plugin install wordpress-seo --activate --allow-root || true
 
+echo "==> Installing WPGraphQL + WPGraphQL for ACF (required by scripts/migrate-to-wordpress)..."
+# Best-effort: these plugin slugs/availability aren't independently verified against a
+# live WordPress instance. If either install fails, check wp-admin > Plugins > Add New
+# and search manually, or adjust the slug here.
+wp plugin install wp-graphql --activate --allow-root || echo "    WARNING: failed to install WPGraphQL"
+wp plugin install wpgraphql-acf --activate --allow-root || echo "    WARNING: failed to install WPGraphQL for ACF"
+
 echo "==> Checking for a manually-provided ACF PRO zip in wp-content/plugins-manual/..."
 MANUAL_DIR="/var/www/html/wp-content/plugins-manual"
 ACF_PRO_ZIP=$(ls ${MANUAL_DIR}/advanced-custom-fields-pro*.zip 2>/dev/null | head -n1 || true)
