@@ -40,7 +40,6 @@ services:
     image: wordpress:cli-2.10-php8.2
     depends_on:
       - wordpress
-    user: www-data
     entrypoint: ["tail", "-f", "/dev/null"]
     environment:
       WORDPRESS_DB_HOST: db:3306
@@ -62,7 +61,6 @@ services:
     image: wordpress:cli-2.10-php8.2
     depends_on:
       - wordpress
-    user: www-data
     restart: "no"
     entrypoint: ["sh", "/scripts/bootstrap.sh"]
     environment:
