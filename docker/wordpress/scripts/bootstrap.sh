@@ -63,6 +63,25 @@ fi
 echo "==> Ensuring mu-plugins are picked up (no activation needed, WP loads mu-plugins/*.php automatically)..."
 wp plugin list --allow-root
 
+echo "==> Creating the Pages our custom templates key off by slug (page-{slug}.php)..."
+create_page_if_missing () {
+  local slug="$1"
+  local title="$2"
+  local existing
+  existing=$(wp post list --post_type=page --name="$slug" --field=ID --allow-root 2>/dev/null || true)
+  if [ -n "$existing" ]; then
+    echo "    Already exists: /${slug}/ (Page #${existing})"
+  else
+    wp post create --post_type=page --post_status=publish --post_title="$title" --post_name="$slug" --allow-root >/dev/null
+    echo "    Created: /${slug}/ (\"${title}\")"
+  fi
+}
+
+create_page_if_missing "about" "About"
+create_page_if_missing "services" "Services"
+create_page_if_missing "contact" "Contact"
+create_page_if_missing "blog" "Blog"
+
 echo "==> Creating an Application Password for the migration script (if one doesn't already exist)..."
 APP_PW_FILE="/scripts/.app-password"
 if [ ! -f "$APP_PW_FILE" ]; then
