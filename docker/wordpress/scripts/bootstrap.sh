@@ -5,6 +5,11 @@ set -eu
 
 cd /var/www/html
 
+echo "==> Waiting for WordPress core files..."
+until [ -f /var/www/html/wp-load.php ]; do
+  sleep 2
+done
+
 echo "==> Waiting for database..."
 until wp db check --path=/var/www/html --allow-root 2>/dev/null; do
   sleep 2

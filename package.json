@@ -13,7 +13,7 @@
     "test:watch": "vitest",
     "wp:up": "docker compose -f docker/wordpress/docker-compose.yml up -d",
     "wp:down": "docker compose -f docker/wordpress/docker-compose.yml down",
-    "wp:bootstrap": "docker compose -f docker/wordpress/docker-compose.yml run --rm wpcli bash /scripts/bootstrap.sh",
+    "wp:bootstrap": "docker compose -f docker/wordpress/docker-compose.yml up bootstrap",
     "wp:css": "tailwindcss -c docker/wordpress/tailwind.config.cjs -i docker/wordpress/wp-content/themes/heavy-haul-hub/assets/css/tailwind-src.css -o docker/wordpress/wp-content/themes/heavy-haul-hub/assets/css/tailwind.css --minify",
     "wp:css:watch": "tailwindcss -c docker/wordpress/tailwind.config.cjs -i docker/wordpress/wp-content/themes/heavy-haul-hub/assets/css/tailwind-src.css -o docker/wordpress/wp-content/themes/heavy-haul-hub/assets/css/tailwind.css --watch",
     "migrate:wp": "tsx scripts/migrate-to-wordpress/index.ts"

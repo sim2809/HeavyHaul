@@ -57,6 +57,29 @@ services:
       - ./plugins-manual:/var/www/html/wp-content/plugins-manual
       - ./scripts:/scripts
 
+  bootstrap:
+    image: wordpress:cli-2.10-php8.2
+    depends_on:
+      - wordpress
+    user: www-data
+    restart: "no"
+    entrypoint: ["sh", "/scripts/bootstrap.sh"]
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WP_ADMIN_USER: ${WP_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD:-admin_password}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@example.com}
+      WP_URL: http://localhost:8090
+    volumes:
+      - wp_data:/var/www/html
+      - ./wp-content/themes/heavy-haul-hub:/var/www/html/wp-content/themes/heavy-haul-hub
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./plugins-manual:/var/www/html/wp-content/plugins-manual
+      - ./scripts:/scripts
+
 volumes:
   db_data:
   wp_data:

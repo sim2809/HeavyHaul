@@ -19,8 +19,12 @@ is unrelated to this WordPress instance.
 cd docker/wordpress
 cp .env.example .env        # edit WP_ADMIN_PASSWORD before going further
 docker compose up -d
-docker compose run --rm wpcli bash /scripts/bootstrap.sh
 ```
+
+That's it — a one-shot `bootstrap` container runs automatically, waits for WordPress
+and the database to be ready, then installs WordPress core, activates the theme, sets
+permalinks, and installs plugins. Watch it with `docker compose logs -f bootstrap`.
+It's idempotent, so re-running `docker compose up -d` later is harmless.
 
 Then visit:
 - Site: http://localhost:8090
