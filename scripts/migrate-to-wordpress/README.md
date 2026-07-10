@@ -18,20 +18,21 @@ WordPress instance, so the WordPress migration doesn't mean starting from a blan
 
 ## Prerequisites
 
-1. The local WordPress stack running and bootstrapped (`npm run wp:up && npm run wp:bootstrap`),
-   with ACF PRO + WPGraphQL for ACF actually installed (see `docker/wordpress/README.md`) —
-   without them, `pageSections`/options-page mutations will fail.
-2. Environment variables (export in your shell, or create `scripts/migrate-to-wordpress/.env.local`
-   and `source`/load it yourself — this script does not read the app's root `.env` automatically
-   for the Supabase service-role key, since that key must never live next to the anon key):
+1. The local WordPress stack running and bootstrapped (`docker compose up -d` in
+   `docker/wordpress`, or `npm run wp:up`) — this also auto-installs WPGraphQL,
+   WPGraphQL for ACF, and either ACF PRO or the free Secure Custom Fields plugin
+   (see `docker/wordpress/README.md`). Without these, `pageSections`/options-page
+   mutations will fail.
+2. Copy the env template and fill in the one secret it needs:
+   ```bash
+   cp scripts/migrate-to-wordpress/.env.local.example scripts/migrate-to-wordpress/.env.local
    ```
-   VITE_SUPABASE_URL=...                     # same value as the app's .env
-   SUPABASE_SERVICE_ROLE_KEY=...              # Supabase dashboard → Project Settings → API — NOT the anon key
-   WP_ADMIN_USER=admin
-   WP_APPLICATION_PASSWORD=...                # from docker/wordpress/scripts/.app-password after bootstrap
-   WPGRAPHQL_ENDPOINT=http://localhost:8090/graphql
-   WP_REST_ENDPOINT=http://localhost:8090/wp-json
-   ```
+   Then edit `.env.local` (gitignored, never committed) and paste in
+   `SUPABASE_SERVICE_ROLE_KEY` from the Supabase dashboard → Project Settings → API
+   — **not** the anon key already in the app's root `.env`. Everything else in the
+   file already has a working default, including `WP_APPLICATION_PASSWORD`, which
+   is read automatically from `docker/wordpress/scripts/.app-password` if you leave
+   it blank. The script loads `.env.local` itself — no need to `export`/`source` it.
 
 ## Run
 

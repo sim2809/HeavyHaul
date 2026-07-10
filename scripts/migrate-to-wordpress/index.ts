@@ -5,14 +5,43 @@
 // Usage:
 //   npm run migrate:wp              # real run
 //   npm run migrate:wp -- --dry-run # log intended actions without writing anything
-import { migrateMedia } from "./steps/migrateMedia";
-import { migratePages } from "./steps/migratePages";
-import { migrateSiteContent } from "./steps/migrateSiteContent";
-import { migrateBlogPosts } from "./steps/migrateBlogPosts";
-import { migrateNav } from "./steps/migrateNav";
-import { migrateGlobalSettings } from "./steps/migrateGlobalSettings";
+//
+// Reads scripts/migrate-to-wordpress/.env.local if present (see .env.local.example),
+// so you don't have to export these in your shell by hand. Step modules are imported
+// dynamically, after the env file loads, since they read process.env at module load time.
+import { existsSync, readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function loadEnvLocal(): void {
+  const envPath = join(__dirname, ".env.local");
+  if (!existsSync(envPath)) return;
+  for (const line of readFileSync(envPath, "utf8").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    let value = trimmed.slice(eq + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    if (!(key in process.env)) process.env[key] = value;
+  }
+}
 
 async function main() {
+  loadEnvLocal();
+
+  const { migrateMedia } = await import("./steps/migrateMedia");
+  const { migratePages } = await import("./steps/migratePages");
+  const { migrateSiteContent } = await import("./steps/migrateSiteContent");
+  const { migrateBlogPosts } = await import("./steps/migrateBlogPosts");
+  const { migrateNav } = await import("./steps/migrateNav");
+  const { migrateGlobalSettings } = await import("./steps/migrateGlobalSettings");
+
   const dryRun = process.argv.includes("--dry-run");
   if (dryRun) console.log("=== DRY RUN — no data will be written ===\n");
 

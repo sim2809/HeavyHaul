@@ -1,15 +1,31 @@
 // Auth + transport for pushing existing Supabase content into WordPress.
 // Local, one-time ops script — never bundled into the Vite app.
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const WP_REST_ENDPOINT = process.env.WP_REST_ENDPOINT || "http://localhost:8090/wp-json";
 const WP_GRAPHQL_ENDPOINT = process.env.WPGRAPHQL_ENDPOINT || "http://localhost:8090/graphql";
 const WP_ADMIN_USER = process.env.WP_ADMIN_USER || "admin";
-const WP_APPLICATION_PASSWORD = process.env.WP_APPLICATION_PASSWORD || "";
+
+function loadApplicationPassword(): string {
+  if (process.env.WP_APPLICATION_PASSWORD) return process.env.WP_APPLICATION_PASSWORD;
+  const appPasswordFile = join(__dirname, "..", "..", "docker", "wordpress", "scripts", ".app-password");
+  try {
+    return readFileSync(appPasswordFile, "utf8").trim();
+  } catch {
+    return "";
+  }
+}
+
+const WP_APPLICATION_PASSWORD = loadApplicationPassword();
 
 if (!WP_APPLICATION_PASSWORD) {
   console.warn(
-    "WARNING: WP_APPLICATION_PASSWORD is not set. Generate one via `npm run wp:bootstrap` " +
-      "(see docker/wordpress/scripts/.app-password) and export it before running a real migration."
+    "WARNING: WP_APPLICATION_PASSWORD is not set and docker/wordpress/scripts/.app-password " +
+      "wasn't found. Run `npm run wp:bootstrap` first, or export WP_APPLICATION_PASSWORD yourself."
   );
 }
 

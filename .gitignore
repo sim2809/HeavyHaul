@@ -22,6 +22,7 @@ docker/wordpress/scripts/.app-password
 
 # One-time Supabase -> WordPress migration script
 scripts/migrate-to-wordpress/.env.local
+!scripts/migrate-to-wordpress/.env.local.example
 scripts/migrate-to-wordpress/output/
 
 # Editor directories and files
