@@ -4,9 +4,11 @@
  * reproducible by anyone running `docker compose up` + bootstrap.sh, instead of being
  * hand-clicked together in the ACF Field Group UI.
  *
- * Requires ACF PRO (Flexible Content, Repeater, Options Page field types are PRO-only).
- * If ACF PRO isn't active yet, these acf_add_local_* calls are simply no-ops — WordPress
- * still boots fine, the fields just won't appear until ACF PRO is installed.
+ * Requires ACF PRO or the free Secure Custom Fields (SCF) plugin — both provide the
+ * Flexible Content, Repeater, and Options Page field types used below. If neither is
+ * active yet, these acf_add_local_* calls are simply no-ops — WordPress still boots
+ * fine, the fields just won't appear until one of them is installed (see
+ * docker/wordpress/scripts/bootstrap.sh, which installs SCF by default).
  *
  * Two content models, matching the two systems that existed in the old Supabase CMS:
  *

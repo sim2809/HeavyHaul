@@ -35,12 +35,16 @@ Then visit:
 | Plugin | Cost | How it gets installed |
 |---|---|---|
 | Yoast SEO | Free | Automatic — `bootstrap.sh` installs from wordpress.org |
-| **ACF PRO** | Paid (~$49+/yr) | **You must buy + download it yourself** from advancedcustomfields.com, then drop the zip (named like `advanced-custom-fields-pro-X.X.X.zip`) into `docker/wordpress/plugins-manual/` before running bootstrap. Required because Flexible Content, Repeater, and Options Page field types — used throughout `heavy-haul-acf.php` — are PRO-only. |
+| ACF fields (Flexible Content, Repeater, Options Page) | Free | Automatic — `bootstrap.sh` installs **Secure Custom Fields** (SCF) from wordpress.org by default. SCF is WordPress.org's fork of ACF and includes these field types (previously ACF-PRO-only) for free, with the same `acf_add_local_field_group()`/`get_field()` API `heavy-haul-acf.php` and the theme templates use. |
 
-`bootstrap.sh` looks for the ACF PRO zip and installs it if present — it does **not** fail
-if it's missing, so you can iterate on the Docker/WordPress-core/theme setup before buying ACF PRO.
-The ACF field schema in `wp-content/mu-plugins/heavy-haul-acf.php` won't actually register any
-fields until ACF (PRO) is active, though, and the theme's templates depend on those fields.
+If you'd rather use the official **ACF PRO** plugin instead (paid, ~$49+/yr, from
+advancedcustomfields.com), drop its zip (named like `advanced-custom-fields-pro-X.X.X.zip`)
+into `docker/wordpress/plugins-manual/` before running bootstrap — `bootstrap.sh` installs
+that instead of SCF when the zip is present.
+
+Either way, the ACF field schema in `wp-content/mu-plugins/heavy-haul-acf.php` won't
+actually register any fields until one of these two plugins is active, and the theme's
+templates depend on those fields.
 
 Any other plugin (forms, security, caching, redirects, etc.) can simply be installed from
 wp-admin's Plugins screen like any standard WordPress site — nothing about this custom theme

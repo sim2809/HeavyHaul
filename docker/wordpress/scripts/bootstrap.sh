@@ -39,22 +39,19 @@ wp rewrite flush --hard --allow-root
 echo "==> Installing free plugins from wordpress.org..."
 wp plugin install wordpress-seo --activate --allow-root || true
 
-echo "==> Checking for manually-provided paid plugin zips in wp-content/plugins-manual/..."
+echo "==> Checking for a manually-provided ACF PRO zip in wp-content/plugins-manual/..."
 MANUAL_DIR="/var/www/html/wp-content/plugins-manual"
-install_if_present () {
-  local zip_glob="$1"
-  local plugin_label="$2"
-  local found
-  found=$(ls ${MANUAL_DIR}/${zip_glob} 2>/dev/null | head -n1 || true)
-  if [ -n "$found" ]; then
-    echo "    Installing ${plugin_label} from ${found}"
-    wp plugin install "$found" --activate --allow-root || echo "    WARNING: failed to install ${plugin_label}"
-  else
-    echo "    SKIPPED: ${plugin_label} not found (expected a zip matching '${zip_glob}' in docker/wordpress/plugins-manual/). Bootstrap will continue without it."
-  fi
-}
-
-install_if_present "advanced-custom-fields-pro*.zip" "ACF PRO"
+ACF_PRO_ZIP=$(ls ${MANUAL_DIR}/advanced-custom-fields-pro*.zip 2>/dev/null | head -n1 || true)
+if [ -n "$ACF_PRO_ZIP" ]; then
+  echo "    Installing ACF PRO from ${ACF_PRO_ZIP}"
+  wp plugin install "$ACF_PRO_ZIP" --activate --allow-root || echo "    WARNING: failed to install ACF PRO"
+else
+  echo "    No ACF PRO zip found — installing free Secure Custom Fields (SCF) instead."
+  echo "    SCF is WordPress.org's fork of ACF and includes the Flexible Content, Repeater,"
+  echo "    and Options Page field types our theme's ACF schema (heavy-haul-acf.php) needs,"
+  echo "    at no cost. Same acf_add_local_field_group()/get_field() API as ACF PRO."
+  wp plugin install secure-custom-fields --activate --allow-root || echo "    WARNING: failed to install Secure Custom Fields"
+fi
 
 echo "==> Ensuring mu-plugins are picked up (no activation needed, WP loads mu-plugins/*.php automatically)..."
 wp plugin list --allow-root
