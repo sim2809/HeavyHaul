@@ -11,6 +11,6 @@
  * be public; row-level security on the Supabase side is what actually protects data).
  */
 
-define('HH_SUPABASE_URL', 'https://yizbdceusxhyofdgkfhg.supabase.co');
-define('HH_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpemJkY2V1c3hoeW9mZGdrZmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MDQzODksImV4cCI6MjA5NzQ4MDM4OX0.MuwDFJAHPMHZCRbp_0z1cZyHpkH1TIF8phVaVIeNgVM');
+define('HH_SUPABASE_URL', 'https://lophjjccxjqhbhacmfow.supabase.co');
+define('HH_SUPABASE_ANON_KEY', 'sb_publishable_bGLMUrss_5SY3iLfEzRQww_zwCOc7Rb');
 define('HH_SUBMIT_LEAD_URL', HH_SUPABASE_URL . '/functions/v1/submit-lead');
