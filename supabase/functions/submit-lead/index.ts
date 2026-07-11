@@ -1,5 +1,6 @@
 // Edge function: receive a public form submission, log it to form_submissions,
-// then best-effort sync to HubSpot CRM if enabled in hubspot_settings.
+// send a best-effort email notification via Resend, then best-effort sync to
+// HubSpot CRM if enabled in hubspot_settings.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
@@ -19,6 +20,51 @@ const Body = z.object({
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const LEAD_NOTIFICATION_EMAIL = Deno.env.get("LEAD_NOTIFICATION_EMAIL") ?? "galstyan.simon12@gmail.com";
+
+// Best-effort — a failed notification email should never fail the lead submission itself.
+async function sendLeadNotificationEmail(p: z.infer<typeof Body>): Promise<void> {
+  if (!RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY not set — skipping lead notification email");
+    return;
+  }
+  const rows = [
+    ["Name", p.name],
+    ["Email", p.email],
+    ["Phone", p.phone],
+    ["Origin", p.origin],
+    ["Destination", p.destination],
+    ["Equipment", p.equipment],
+    ["Message", p.message],
+    ["Source", p.source],
+    ["Page", p.page_url],
+  ].filter(([, v]) => v);
+  const html = `<h2>New quote request</h2><table>${
+    rows.map(([k, v]) => `<tr><td><strong>${k}</strong></td><td>${v}</td></tr>`).join("")
+  }</table>`;
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Heavy Haul Hub <onboarding@resend.dev>",
+        to: [LEAD_NOTIFICATION_EMAIL],
+        subject: `New quote request${p.name ? ` from ${p.name}` : ""}`,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      console.error(`Resend notification failed (${res.status}): ${await res.text()}`);
+    }
+  } catch (e) {
+    console.error("Resend notification threw:", (e as Error).message);
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -45,7 +91,10 @@ Deno.serve(async (req) => {
     }).select("id").single();
     if (insertErr) throw insertErr;
 
-    // 2. Load HubSpot config and attempt sync
+    // 2. Notify by email (best-effort, never blocks/fails the lead submission)
+    await sendLeadNotificationEmail(p);
+
+    // 3. Load HubSpot config and attempt sync
     const { data: hs } = await admin.from("hubspot_settings").select("*").eq("id", 1).maybeSingle();
 
     if (!hs?.enabled || !hs.private_app_token) {
