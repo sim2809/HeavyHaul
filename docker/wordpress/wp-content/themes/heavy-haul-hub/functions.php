@@ -91,6 +91,17 @@ add_action('wp_enqueue_scripts', function () {
     wp_localize_script('hh-quote-forms', 'hhConfig', [
         'submitLeadUrl' => rest_url('hh/v1/submit-lead'),
     ]);
+
+    if (is_front_page()) {
+        $map_js_path = HH_THEME_DIR . '/assets/js/usa-map.js';
+        wp_enqueue_script(
+            'hh-usa-map',
+            HH_THEME_URI . '/assets/js/usa-map.js',
+            [],
+            file_exists($map_js_path) ? filemtime($map_js_path) : '1.0.0',
+            true
+        );
+    }
 });
 
 // Flush rewrite rules whenever this theme is activated, since Phase 7 registers custom

@@ -6,10 +6,12 @@
  * component's own page key, e.g. "guarantees"/"dispatchers"/"faq") to exactly
  * match the original useSiteContent() get() calls, fallback text included.
  *
+ * UsaMap.tsx's animated state-by-state fill is ported to vanilla JS + d3-geo at
+ * assets/js/usa-map.js, rendered into the `[data-hh-usa-map]` container below
+ * (enqueued homepage-only in functions.php); the <noscript> fallback keeps the
+ * old static state-abbreviation grid for JS-disabled clients.
+ *
  * SIMPLIFICATIONS (see final report for details):
- * - UsaMap.tsx (react-simple-maps + d3-geo animated state-by-state fill) is
- *   replaced with a static grid of all 50 state abbreviations (via hh_states())
- *   inside the same lg:col-span-8 / lg:col-span-4 layout.
  * - Gallery.tsx's video player + thumbnail rail is dropped (heavy-haul-loading.mp4
  *   / heavy-haul-transport.mp4 don't exist in this repo) — only the static photo
  *   grid section is ported, with the same real gallery photos.
@@ -450,24 +452,17 @@ $hh_gallery_photos = [
         </div>
         <div class="grid lg:grid-cols-12 gap-8 items-center">
             <div class="lg:col-span-8">
-                <div class="relative w-full rounded-lg border border-border bg-card p-6 sm:p-10 overflow-hidden">
-                    <div class="absolute inset-0 topo-bg opacity-20" aria-hidden="true"></div>
-                    <div class="relative flex flex-wrap gap-2 justify-center">
-                        <?php foreach (hh_states() as $hh_st): ?>
-                            <span class="inline-flex items-center justify-center h-9 min-w-[2.75rem] px-2 rounded-sm bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider shadow-cta"
-                                  title="<?php echo esc_attr($hh_st['name']); ?>"><?php echo esc_html($hh_st['abbr']); ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="relative mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs uppercase tracking-widest font-bold text-muted-foreground">
-                        <span class="inline-flex items-center gap-2">
-                            <?php echo hh_lucide('map-pin', 'h-4 w-4 text-primary'); ?>
-                            <span class="text-foreground">50</span> / 50 States Active
-                        </span>
-                        <span class="inline-flex items-center gap-2">
-                            <span class="h-3 w-3 rounded-sm bg-primary inline-block"></span>
-                            Dispatched
-                        </span>
-                    </div>
+                <div data-hh-usa-map>
+                    <noscript>
+                        <div class="relative w-full rounded-lg border border-border bg-card p-6 sm:p-10 overflow-hidden">
+                            <div class="relative flex flex-wrap gap-2 justify-center">
+                                <?php foreach (hh_states() as $hh_st): ?>
+                                    <span class="inline-flex items-center justify-center h-9 min-w-[2.75rem] px-2 rounded-sm bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider shadow-cta"
+                                          title="<?php echo esc_attr($hh_st['name']); ?>"><?php echo esc_html($hh_st['abbr']); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </noscript>
                 </div>
             </div>
             <div class="lg:col-span-4 space-y-5">
