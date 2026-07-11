@@ -5,14 +5,16 @@
  * activation SEQUENCE, and STEP/HOLD_FULL/RESET_FADE timings as the original component,
  * plus the same Lucide "map-pin" icon shape for the dropping marker.
  *
- * Loads d3-geo + topojson-client from CDN (both are tiny, and this theme has no JS build
- * step / bundler to import them through instead).
+ * Loads the full D3 bundle + topojson-client from CDN (this theme has no JS build step /
+ * bundler to import them through instead). The standalone d3-geo-only package depends on
+ * d3-array's Adder internally but doesn't bundle it, so the full d3 bundle is used instead
+ * of loading d3-geo alone.
  */
 (function () {
   'use strict';
 
   var GEO_URL = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
-  var D3_GEO_SRC = 'https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js';
+  var D3_SRC = 'https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js';
   var TOPOJSON_SRC = 'https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js';
 
   var SEQUENCE = [
@@ -76,9 +78,9 @@
 
     var svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('viewBox', '0 0 ' + WIDTH + ' ' + HEIGHT);
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', 'auto');
     svg.style.display = 'block';
+    svg.style.width = '100%';
+    svg.style.height = 'auto';
     mapWrap.appendChild(svg);
 
     var statesLayer = document.createElementNS(SVG_NS, 'g');
@@ -205,7 +207,7 @@
     var containers = document.querySelectorAll('[data-hh-usa-map]');
     if (!containers.length) return;
 
-    Promise.all([loadScript(D3_GEO_SRC), loadScript(TOPOJSON_SRC)])
+    Promise.all([loadScript(D3_SRC), loadScript(TOPOJSON_SRC)])
       .then(function () {
         containers.forEach(buildMap);
       })
