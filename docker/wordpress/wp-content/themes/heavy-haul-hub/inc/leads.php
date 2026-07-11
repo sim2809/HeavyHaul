@@ -51,27 +51,68 @@ add_action('manage_hh_lead_posts_custom_column', function ($column, $post_id) {
     }
 }, 10, 2);
 
-function hh_send_lead_notification_email(array $lead): void {
-    $resend_key = getenv('RESEND_API_KEY');
-    if (!$resend_key) {
-        error_log('RESEND_API_KEY not set — skipping lead notification email');
-        return;
-    }
-    $to = getenv('HH_LEAD_NOTIFICATION_EMAIL') ?: 'galstyan.simon12@gmail.com';
-
+/**
+ * Inline-styled HTML email matching the site's own palette (src/index.css: --primary
+ * 45 100% 50% = #FFBF00 amber, --secondary 0 0% 7% = #121212 near-black) and the
+ * dark-header-with-white-logo look of header.php. Table-based layout + inline styles
+ * throughout, since email clients don't reliably support <style> blocks or flexbox/grid.
+ */
+function hh_build_lead_notification_html(array $lead, int $post_id): string {
     $labels = [
-        'name' => 'Name', 'email' => 'Email', 'phone' => 'Phone',
+        'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email',
         'origin' => 'Origin', 'destination' => 'Destination',
         'equipment' => 'Equipment', 'message' => 'Message',
         'source' => 'Source', 'page_url' => 'Page',
     ];
     $rows = '';
     foreach ($labels as $key => $label) {
-        if (!empty($lead[$key])) {
-            $rows .= '<tr><td><strong>' . esc_html($label) . '</strong></td><td>' . esc_html($lead[$key]) . '</td></tr>';
-        }
+        if (empty($lead[$key])) continue;
+        $rows .= '<tr>'
+            . '<td style="padding:10px 16px;border-bottom:1px solid #eee;font:600 12px/1.4 Arial,Helvetica,sans-serif;'
+            . 'text-transform:uppercase;letter-spacing:.05em;color:#7a7a7a;white-space:nowrap;vertical-align:top;">'
+            . esc_html($label) . '</td>'
+            . '<td style="padding:10px 16px;border-bottom:1px solid #eee;font:400 15px/1.5 Arial,Helvetica,sans-serif;color:#141414;">'
+            . nl2br(esc_html($lead[$key])) . '</td>'
+            . '</tr>';
     }
-    $html = '<h2>New quote request</h2><table>' . $rows . '</table>';
+
+    $logo_url = HH_THEME_URI . '/assets/img/logo-hhg-white.png';
+    $edit_url = admin_url("post.php?post={$post_id}&action=edit");
+
+    return '<div style="background:#f4f4f4;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">'
+        . '<tr><td style="background:#121212;padding:24px;text-align:center;">'
+        . '<img src="' . esc_url($logo_url) . '" alt="Heavy Haul Group" height="48" style="height:48px;width:auto;">'
+        . '</td></tr>'
+        . '<tr><td style="background:#FFBF00;height:4px;line-height:4px;font-size:0;">&nbsp;</td></tr>'
+        . '<tr><td style="padding:28px 16px 8px;">'
+        . '<div style="display:inline-block;background:#FFBF00;color:#141414;font:700 11px/1 Arial,Helvetica,sans-serif;'
+        . 'text-transform:uppercase;letter-spacing:.08em;padding:6px 10px;border-radius:4px;margin-bottom:12px;">New Quote Request</div>'
+        . '<h1 style="margin:12px 0 0;font:700 22px/1.3 Arial,Helvetica,sans-serif;color:#141414;">'
+        . esc_html($lead['name'] ?: 'New lead') . '</h1>'
+        . '</td></tr>'
+        . '<tr><td style="padding:8px 0 24px;">'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $rows . '</table>'
+        . '</td></tr>'
+        . '<tr><td style="padding:0 16px 28px;">'
+        . '<a href="' . esc_url($edit_url) . '" style="display:inline-block;background:#121212;color:#ffffff;'
+        . 'font:700 13px/1 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.05em;'
+        . 'padding:12px 20px;border-radius:4px;text-decoration:none;">View in wp-admin</a>'
+        . '</td></tr>'
+        . '<tr><td style="background:#f9f9f9;padding:16px;text-align:center;font:400 12px/1.5 Arial,Helvetica,sans-serif;color:#999;">'
+        . 'Heavy Haul Hub &middot; ' . esc_html(current_time('F j, Y g:i a'))
+        . '</td></tr>'
+        . '</table></div>';
+}
+
+function hh_send_lead_notification_email(array $lead, int $post_id): void {
+    $resend_key = getenv('RESEND_API_KEY');
+    if (!$resend_key) {
+        error_log('RESEND_API_KEY not set — skipping lead notification email');
+        return;
+    }
+    $to = getenv('HH_LEAD_NOTIFICATION_EMAIL') ?: 'galstyan.simon12@gmail.com';
+    $html = hh_build_lead_notification_html($lead, $post_id);
 
     $res = wp_remote_post('https://api.resend.com/emails', [
         'headers' => [
@@ -128,7 +169,7 @@ add_action('rest_api_init', function () {
                 return new WP_Error('hh_insert_failed', 'Could not save lead.', ['status' => 500]);
             }
 
-            hh_send_lead_notification_email($lead);
+            hh_send_lead_notification_email($lead, $post_id);
 
             return rest_ensure_response(['ok' => true, 'id' => $post_id]);
         },
