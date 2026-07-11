@@ -105,13 +105,24 @@ function hh_build_lead_notification_html(array $lead, int $post_id): string {
         . '</table></div>';
 }
 
+/**
+ * Reads config from a getenv() var if set (docker-compose locally), falling back to a
+ * same-named PHP constant (define()'d in wp-config.php) for hosts like Cloudways that
+ * disable putenv()/have no per-app environment variable mechanism.
+ */
+function hh_env(string $name): string {
+    $value = getenv($name);
+    if ($value !== false && $value !== '') return $value;
+    return defined($name) ? (string) constant($name) : '';
+}
+
 function hh_send_lead_notification_email(array $lead, int $post_id): void {
-    $resend_key = getenv('RESEND_API_KEY');
+    $resend_key = hh_env('RESEND_API_KEY');
     if (!$resend_key) {
         error_log('RESEND_API_KEY not set — skipping lead notification email');
         return;
     }
-    $to = getenv('HH_LEAD_NOTIFICATION_EMAIL') ?: 'galstyan.simon12@gmail.com';
+    $to = hh_env('HH_LEAD_NOTIFICATION_EMAIL') ?: 'galstyan.simon12@gmail.com';
     $html = hh_build_lead_notification_html($lead, $post_id);
 
     $res = wp_remote_post('https://api.resend.com/emails', [
