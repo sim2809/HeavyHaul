@@ -118,16 +118,28 @@
           el.style.fill = 'hsl(var(--muted))';
           el.style.transition = 'fill 500ms ease, filter 500ms ease';
           el.style.cursor = 'pointer';
+          el.style.outline = 'none';
           var titleEl = document.createElementNS(SVG_NS, 'title');
           titleEl.textContent = name;
           el.appendChild(titleEl);
           statesLayer.appendChild(el);
-          paths[name] = { el: el, feature: feature };
+          var entry = { el: el, feature: feature, isActive: false };
+          paths[name] = entry;
+
+          // Matches react-simple-maps' style={{ hover, pressed }}: any state (active or
+          // not) turns primary-colored on hover/press, reverting to its real active/
+          // inactive fill on mouse-leave — independent of the activation sequence.
+          el.addEventListener('mouseenter', function () { el.style.fill = 'hsl(var(--primary))'; });
+          el.addEventListener('mousedown', function () { el.style.fill = 'hsl(var(--primary))'; });
+          el.addEventListener('mouseleave', function () {
+            el.style.fill = entry.isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted))';
+          });
         });
 
         function setActive(name, on) {
           var entry = paths[name];
           if (!entry) return;
+          entry.isActive = on;
           entry.el.style.fill = on ? 'hsl(var(--primary))' : 'hsl(var(--muted))';
           entry.el.style.filter = on ? 'drop-shadow(0 0 6px hsl(var(--primary) / 0.55))' : 'none';
         }
