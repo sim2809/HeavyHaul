@@ -6,8 +6,10 @@ real content-editing surface — pages, blog posts, service categories/subcatego
 settings, SEO, and menus are all managed there. Any WordPress plugin can be installed on top.
 
 The React/Vite app in the repo root no longer renders the public marketing site; it's kept
-only for the small Supabase-backed internal `/admin` panel (leads/CRM/redirects/users), which
-is unrelated to this WordPress instance.
+only for the small Supabase-backed internal `/admin` panel (CRM/redirects/users), which is
+unrelated to this WordPress instance. Quote/lead form submissions on the WordPress site are
+stored natively as a `hh_lead` post type in WordPress's own database (see `inc/leads.php`),
+not in Supabase — manageable from wp-admin under **Leads**.
 
 ## Prerequisites
 

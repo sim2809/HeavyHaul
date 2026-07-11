@@ -30,6 +30,8 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
       WORDPRESS_DEBUG: 1
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      HH_LEAD_NOTIFICATION_EMAIL: ${HH_LEAD_NOTIFICATION_EMAIL:-galstyan.simon12@gmail.com}
     volumes:
       - wp_data:/var/www/html
       - ./wp-content/themes/heavy-haul-hub:/var/www/html/wp-content/themes/heavy-haul-hub

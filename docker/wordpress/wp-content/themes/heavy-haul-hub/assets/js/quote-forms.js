@@ -1,9 +1,8 @@
 /**
- * Lead-capture form behavior — vanilla JS port of src/lib/submitLead.ts (calls the same
- * Supabase `submit-lead` edge function directly, no backend change) plus the step-wizard
- * logic from InstantQuoteCalculator.tsx and the plain-form logic from QuoteForm.tsx /
- * ServiceQuoteForm.tsx. `hhConfig` (submitLeadUrl/supabaseAnonKey) is localized in
- * functions.php.
+ * Lead-capture form behavior — posts to this theme's own `hh/v1/submit-lead` REST route
+ * (inc/leads.php), which stores leads as a `hh_lead` CPT and emails a notification. Plus
+ * the step-wizard logic from InstantQuoteCalculator.tsx and the plain-form logic from
+ * QuoteForm.tsx / ServiceQuoteForm.tsx. `hhConfig.submitLeadUrl` is localized in functions.php.
  */
 (function () {
   'use strict';
@@ -38,8 +37,6 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: window.hhConfig.supabaseAnonKey,
-        Authorization: 'Bearer ' + window.hhConfig.supabaseAnonKey,
       },
       body: JSON.stringify(body),
     });

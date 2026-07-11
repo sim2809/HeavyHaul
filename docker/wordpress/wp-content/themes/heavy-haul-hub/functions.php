@@ -13,7 +13,7 @@ define('HH_THEME_URI', get_template_directory_uri());
 
 require_once HH_THEME_DIR . '/inc/data/states.php';
 require_once HH_THEME_DIR . '/inc/data/cities.php';
-require_once HH_THEME_DIR . '/inc/lead-config.php';
+require_once HH_THEME_DIR . '/inc/leads.php';
 require_once HH_THEME_DIR . '/inc/helpers.php';
 require_once HH_THEME_DIR . '/inc/icons.php';
 require_once HH_THEME_DIR . '/inc/cpt-service-category.php';
@@ -89,8 +89,7 @@ add_action('wp_enqueue_scripts', function () {
     );
 
     wp_localize_script('hh-quote-forms', 'hhConfig', [
-        'submitLeadUrl' => HH_SUBMIT_LEAD_URL,
-        'supabaseAnonKey' => HH_SUPABASE_ANON_KEY,
+        'submitLeadUrl' => rest_url('hh/v1/submit-lead'),
     ]);
 });
 
