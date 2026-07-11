@@ -57,10 +57,19 @@ function hh_common_subfields(string $key_prefix): array {
     );
 }
 
-function hh_items_repeater(string $key_prefix, string $label, array $sub_fields): array {
+/**
+ * $name defaults to 'items' (its original hardcoded value, still correct for callers like
+ * acf-site-content.php where each repeater is the only field on its own dedicated options
+ * page). Pass an explicit $name whenever a post/options page has more than one repeater
+ * built with this helper — it becomes the actual postmeta key ACF stores rows under, so
+ * siblings sharing the default would silently collide (last-saved-wins). This bit
+ * service_category (pillars/steps/stats/faqs/service_gallery all on one post) and Theme
+ * Settings (hours/ads_conversions both on the one global options page).
+ */
+function hh_items_repeater(string $key_prefix, string $label, array $sub_fields, string $name = 'items'): array {
     return [
         'key' => "field_{$key_prefix}_items",
-        'name' => 'items',
+        'name' => $name,
         'label' => $label,
         'type' => 'repeater',
         'layout' => 'block',

@@ -40,7 +40,7 @@ if (function_exists('acf_add_local_field_group')) {
             hh_items_repeater('hh_ts_hours', 'Business Hours', [
                 ['key' => 'field_hh_ts_hours_day', 'name' => 'day', 'label' => 'Day(s)', 'type' => 'text'],
                 ['key' => 'field_hh_ts_hours_hours', 'name' => 'hours', 'label' => 'Hours', 'type' => 'text'],
-            ]),
+            ], 'hours'),
 
             ['key' => 'field_hh_ts_tab_footer', 'label' => 'Footer & SEO Defaults', 'type' => 'tab'],
             ['key' => 'field_hh_ts_footer_content', 'name' => 'footer_content', 'label' => 'Footer Content', 'type' => 'textarea'],
@@ -57,7 +57,7 @@ if (function_exists('acf_add_local_field_group')) {
             ['key' => 'field_hh_ts_google_ads_remarketing_tag', 'name' => 'google_ads_remarketing_tag', 'label' => 'Google Ads Remarketing Tag', 'type' => 'textarea'],
             hh_items_repeater('hh_ts_ads_conversions', 'Google Ads Conversion IDs', [
                 ['key' => 'field_hh_ts_ads_conversion_id', 'name' => 'conversion_id', 'label' => 'Conversion ID', 'type' => 'text'],
-            ]),
+            ], 'ads_conversions'),
             ['key' => 'field_hh_ts_call_tracking_script', 'name' => 'call_tracking_script', 'label' => 'Call Tracking Script', 'type' => 'textarea'],
             ['key' => 'field_hh_ts_custom_header_scripts', 'name' => 'custom_header_scripts', 'label' => 'Custom Header Scripts', 'type' => 'textarea'],
             ['key' => 'field_hh_ts_custom_footer_scripts', 'name' => 'custom_footer_scripts', 'label' => 'Custom Footer Scripts', 'type' => 'textarea'],
