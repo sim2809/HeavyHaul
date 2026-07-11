@@ -25,6 +25,9 @@ scripts/migrate-to-wordpress/.env.local
 !scripts/migrate-to-wordpress/.env.local.example
 scripts/migrate-to-wordpress/output/
 
+# Supabase CLI local machine state (which project is linked, etc.)
+supabase/.temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
