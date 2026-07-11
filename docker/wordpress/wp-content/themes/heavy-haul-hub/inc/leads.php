@@ -76,13 +76,13 @@ function hh_build_lead_notification_html(array $lead, int $post_id): string {
             . '</tr>';
     }
 
-    $logo_url = HH_THEME_URI . '/assets/img/logo-hhg-white.png';
     $edit_url = admin_url("post.php?post={$post_id}&action=edit");
 
     return '<div style="background:#f4f4f4;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">'
         . '<tr><td style="background:#121212;padding:24px;text-align:center;">'
-        . '<img src="' . esc_url($logo_url) . '" alt="Heavy Haul Group" height="48" style="height:48px;width:auto;">'
+        . '<span style="font:700 22px/1 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#ffffff;">'
+        . 'Heavy Haul <span style="color:#FFBF00;">Hub</span></span>'
         . '</td></tr>'
         . '<tr><td style="background:#FFBF00;height:4px;line-height:4px;font-size:0;">&nbsp;</td></tr>'
         . '<tr><td style="padding:28px 16px 8px;">'
