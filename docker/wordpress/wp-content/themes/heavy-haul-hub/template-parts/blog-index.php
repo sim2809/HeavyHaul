@@ -4,11 +4,20 @@
  * (WordPress's native posts-index template) and page-blog.php (fallback template used if
  * Reading Settings assigns a static "Blog" page instead) so both render identically.
  *
- * Uses the standard WordPress Loop against real `post` type posts instead of the original's
- * usePosts() React Query hook. If there are no real posts yet (have_posts() === false), the
- * same 4 hardcoded fallback posts from Blog.tsx's `fallbackPosts` const are rendered so the
- * page never looks empty before real content is added.
+ * Uses its own dedicated WP_Query against real `post` type posts instead of the original's
+ * usePosts() React Query hook — NOT the global $wp_query loop (have_posts()/the_post()),
+ * since on a static Page (page-blog.php) the global loop contains the Page itself, not any
+ * posts, which was rendering a single fake "post" card titled after the page. If there are
+ * no real posts yet, the same 4 hardcoded fallback posts from Blog.tsx's `fallbackPosts`
+ * const are rendered so the page never looks empty before real content is added.
  */
+
+$hh_blog_query = new WP_Query([
+    'post_type' => 'post',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'no_found_rows' => true,
+]);
 
 $hh_fallback_posts = [
     ['slug' => 'oversize-load-permits-101', 'title' => 'Oversize Load Permits 101, What Every Shipper Should Know', 'excerpt' => 'A practical guide to state permits, escort cars, and routing for heavy haul shipments.', 'date' => 'May 28, 2026', 'image' => 'cat-construction.jpg'],
@@ -34,8 +43,8 @@ $hh_fallback_posts = [
 
 <section class="py-14 sm:py-20 bg-background">
     <div class="container-tight grid sm:grid-cols-2 gap-6">
-        <?php if (have_posts()) : ?>
-            <?php while (have_posts()) : the_post(); ?>
+        <?php if ($hh_blog_query->have_posts()) : ?>
+            <?php while ($hh_blog_query->have_posts()) : $hh_blog_query->the_post(); ?>
                 <a href="<?php echo esc_url(get_permalink()); ?>" class="group flex flex-col overflow-hidden rounded-md border border-border bg-card hover:border-primary hover:shadow-card transition-all">
                     <div class="relative aspect-[16/10] overflow-hidden bg-muted">
                         <?php if (has_post_thumbnail()) : ?>
